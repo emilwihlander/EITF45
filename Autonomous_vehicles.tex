@@ -1,0 +1,94 @@
+% !TeX spellcheck = sv_SE
+\documentclass[a4paper]{IEEEtran}
+\def\thepage{} %a4paper adds page numbers, this fix removes them
+
+\usepackage[pdftex]{graphicx}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc} 
+
+\usepackage[swedish]{babel}
+\usepackage{url}
+
+\usepackage{scrextend}
+
+\title{Autonomous Vehicles}
+
+% 1. Teknisk översikt
+% 2. Nutida tillämplingar
+% 3. Framtida och möjliga tillämpningar
+% 4. Konkurrerande teknologier och standarder. Fördelar och nackdelar
+% 5. Egna slutsatser
+
+\author{\IEEEauthorblockN{Niklas Hedström, Emil Wihlander\\ }
+\IEEEauthorblockA{Lunds Tekniska Högskola\\
+Lund, Sverige\\
+Email: \{dat15ewi, dat15nhe\}@student.lu.se}}
+
+%----------------------------------------------------------------
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+
+\end{abstract}
+
+
+\section{Introduktion}
+\emph{Autonomous vehicles}, eller \emph{självkörande fordon}, är fordon som på ett eller annat sätt kan styra sig själv baserat på omgivningen. \emph{SAE International} har definierat klassificeringsnivåer som inom industrin har blivit allmänt accepterade där fordon klassas från SAE level 0 - Ingen automatisering, till SAE level 5 - fullt automatiserad. \cite{SAE2014} 
+
+Huvudfokus kommer ligga på \emph{självkörande bilar} snarare fordon där det finns ett stort intresse bland klassiska biltillverkare
+
+\section{Klassificering}
+\emph{SAE international standard J3016} definierar de olika nivåerna av självförning enligt\cite{SAE2014}:
+
+\vspace{10 pt}
+\begin{labeling}{nivå 1}
+	\item [\textbf{nivå 0}] \emph{No Automation}. Fordonet saknar helt självkörning. Kan skicka varningar till föraren, men är inget krav.
+	\item [\textbf{nivå 1}] \emph{Driver Assistance}. Fordonet har vissa funktioner som påverkar det baserat på omgivningen. T.ex. ACC (Adaptive Cruise Control)\footnote{När fordonet kan ändra farthållaren baserat på hastigheten av framförvarande fordon\cite{ACC}}, LKA (Lane Keeping Assistance)\footnote{När fordonet kan hjälpa till att styra så att den håller sig inom nuvarande fil\cite{LKA}} och Parkeringshjälp\footnote{När fordonet hjälper till att parkera genom att ta över styrningen\cite{AP}}. Föraren måste dock alltid vara redo att ta över.
+	\item [\textbf{nivå 2}] \emph{Partial Automation}. Fordonet kan själv manövrera sig i kända förutsättningar, men när förutsättningar inte längre uppfylls måste föraren ta över genast.
+	\item [\textbf{nivå 3}] \emph{Conditional Automation}. Fordonet ska utöver nivå 2 kunna hantera dynamiska situationer i specifika miljöer, så som huvudleder där gångtrafikanter saknas. Detta innebär att föraren kan släppa fokus helt i dessa miljöer.  
+	\item [\textbf{nivå 4}] \emph{High Automation}. Fordonet ska utöver nivå 3 kunna hantera situationer som inte förväntas uppstå och kunna agera därefter.
+	\item [\textbf{nivå 5}] \emph{Full Automation}. Fordonet ska utöver nivå 4 kunna hantera alla miljöer och därmed aldrig kräva input från en potentiell förare.
+\end{labeling}
+
+%\subsection{Ett underavsnitt}
+\section{Controller Area Network}
+
+\subsection{Physical Layer}
+
+\subsection{Data Link Layer}
+
+\section{Car to Car Communication}
+
+\section{Cloud to Car Communication}
+
+\section{Sammanfattning}
+
+
+
+% figure section to copy
+\begin{figure}
+    \begin{center}
+        \resizebox{!}{40mm}{\includegraphics{example.pdf}}
+    \end{center}
+    \caption{Conceptual network diagram showing the DSL network.}
+    \label{DSLsetup}
+\end{figure}
+
+
+
+
+\begin{thebibliography}{77}
+	\bibitem{SAE2014}SAE International: \emph{Automated Driving}, http://www.sae.org/misc/pdfs/automated\_driving.pdf, 2014 (hämtad 2016-12-02)
+	\bibitem{ACC}Wikipedia: \emph{Autonomous cruise control}, https://en.wikipedia.org/wiki/Autonomous\_cruise\_control\_system, 2016-12-01 (Hämtad 2016-12-01)
+	\bibitem{LKA}Toyota: \emph{Lane Keeping Assist}, 
+	http://www.toyota-global.com/innovation/safety\_technology/safety\_technology/technology\_file/active/lka.html (Hämtad 2016-12-01)
+	\bibitem{AP}Wikipedia: \emph{Automatic parking}, https://en.wikipedia.org/wiki/Automatic\_parking, 2016-11-24 (Hämtad 2016-12-01)
+	
+	
+\bibitem{gsma}S. Parkvall: \emph{Broadband Wireless Access - HSPA and LTE}, http://www.s3.kth.se/signal/edu/s3\_seminar/2009/talks/sem2.pdf (last visited 2009-03-12)
+\bibitem{hostmfl} P. Ödling, T. Magesacher, M. Berg, E. A. Sanchez, S. Höst and P. Börjesson: \emph{The Fourth Generation Broadband Concept}, IEEE Communications Magazine, Vol. 47, No. 1, pp. 63-69, IEEE Communication Society, 2009
+\end{thebibliography}
+
+\end{document}
