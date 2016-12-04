@@ -11,8 +11,10 @@
 
 \usepackage{scrextend}
 
-\title{Autonomous Vehicles}
+\hyphenation{inne-bär}
 
+\title{Autonomous Vehicles}
+% http://www.software-center.se/digitalAssets/1521/1521374_kent-sw-center---software---need-for-speed.v001.pdf
 % 1. Teknisk översikt
 % 2. Nutida tillämplingar
 % 3. Framtida och möjliga tillämpningar
@@ -35,12 +37,17 @@ Email: \{dat15ewi, dat15nhe\}@student.lu.se}}
 
 
 \section{Introduktion}
-\emph{Autonomous vehicles}, eller \emph{självkörande fordon}, är fordon som på ett eller annat sätt kan styra sig själv baserat på omgivningen. \emph{SAE International} har definierat klassificeringsnivåer som inom industrin har blivit allmänt accepterade där fordon klassas från SAE level 0 - Ingen automatisering, till SAE level 5 - fullt automatiserad. \cite{SAE2014} 
+\emph{Autonomous vehicles}, eller \emph{självkörande fordon}, är fordon som på ett eller annat sätt kan styra sig själv baserat på omgivningen. 
+\emph{SAE International} har definierat klassificeringsnivåer som inom industrin har blivit allmänt accepterade där fordon klassas från SAE level 0 - Ingen automatisering, till SAE level 5 - fullt automatiserad. \cite{SAE2014} 
 
-Huvudfokus kommer ligga på \emph{självkörande bilar} snarare fordon där det finns ett stort intresse både bland klassiska biltillverkare så som Volvo, Mercedes-Benz och Ford och nya företag inom bilbranschen så som Google, Tesla och Uber.\cite{VolvoAD}\cite{MercedesAD}\cite{FordAD}\cite{GoogleAD}\cite{TeslaAD}\cite{UberAD}
+Denna rapport kommer behandla den kommunikation som behöver ske för att självkörning ska kunna fungera, det innebär både intern och extern kommunikation. 
+Det inkluderar teknologier som redan är standardiserade och välanvända samt potentiella teknologier som idag inte är färdigutvecklade men ger möjligheten att lösa problem som idag saknar en universellt använd lösning.
+
+Huvudfokus kommer ligga på \emph{självkörande bilar} snarare fordon då det finns ett stort intresse både bland klassiska biltillverkare så som Volvo, Mercedes-Benz och Ford och nya företag inom bilbranschen så som Google, Tesla och Uber att vara först ut. \cite{VolvoAD}\cite{MercedesAD}\cite{FordAD}\cite{GoogleAD}\cite{TeslaAD}\cite{UberAD}
+Den konkurrenspräglade miljön innebär att företagen har varit öppna om sina framsteg inom området och har därmed publicerat mycket information.
 
 \section{Klassificering}
-\emph{SAE international standard J3016} definierar de olika nivåerna av självförning enligt\cite{SAE2014}:
+\emph{SAE international standard J3016} definierar de olika nivåerna av självkörning enligt: \cite{SAE2014}
 
 \vspace{10 pt}
 \begin{labeling}{nivå 1}
@@ -52,33 +59,44 @@ Huvudfokus kommer ligga på \emph{självkörande bilar} snarare fordon där det 
 	\item [\textbf{nivå 5}] \emph{Full Automation}. Fordonet ska utöver nivå 4 kunna hantera alla miljöer och därmed aldrig kräva input från en potentiell förare.
 \end{labeling}
 
-%\subsection{Ett underavsnitt}
-\section{Controller Area Network}
-
-\subsection{Physical Layer}
-
-\subsection{Data Link Layer}
-
-\section{FlexRay}%?
-
-\section{Vehicle Area Network}%?
-
-\section{Car to Car Communication}
-
-\section{Cloud to Car Communication}
-
-\section{Sammanfattning}
+\section{Nuvarande Implementation}
 
 
+\begin{figure}
+	\begin{center}
+		\resizebox{!}{60mm}{\includegraphics{CarCommunicationScheme.pdf}}
+	\end{center}
+	\caption{En förenklad modell över hur ett nät inuti en bil skulle kunna se ut.}
+	\label{CarScheme}
+\end{figure}
 
-% figure section to copy
-%\begin{figure}
-%    \begin{center}
-%        \resizebox{!}{40mm}{\includegraphics{example.pdf}}
-%    \end{center}
-%    \caption{Conceptual network diagram showing the DSL network.}
-%    \label{DSLsetup}
-%\end{figure}
+\section{Internal Vehicle Communication}
+
+\subsection{Controller Area Network}
+
+\subsubsection{Physical Layer}
+Det fysiska lagret i CAN-Bussen består av tre sublager the physical coding (PCS) som är implementerat i CAN-bussens kontroll chip, the physical media attachment (PMA) som specificerar transceiverns egenskaper och the physical media-dependent sub-layers (PMS) som är programspecifik och är inte generellt standardiserad.
+
+The physical coding sublagret i CAN-bussen använder sig av NRZ kodning, jämför med manchester kodning så behöver man inte med NRZ i varje bit ha en fallande eller stigande flank utan signalen kan hållas konstant över en längre period om de överförda bitarna har samma logiska värde. Således måste åtgärder vidtas för att försäkra sig om att det maximala tillåtna intervallet mellan två signalflanker inte överskrids. Detta är viktigt för synkroniseringen. Åtgärdens som gör är att CAN-bussen använder ett protokoll som gör att när det kommer fem bitar av samma värde lägger CAN-buss kontrollen in en bit av motsattvärde, även kallat ”bit stuffing”. Sedan gör den mottagande CAN-buss noden det motsatta och tar bort de instoppade bitarna.
+Om bussen är inaktiv så används den första fallande flanken till att globalt synkronisera alla CAN-buss kontroller. 
+
+The physical media attachment sublagret är normalt implementerat i transceiver chipet. Inputen är TxD och RxD signalerna från CAN-buss kontrollen och outputen driver busslinjerna. \cite{CANphys}
+
+\subsubsection{Data Link Layer}
+
+\subsection{FlexRay}
+
+\section{External Vehicle Communication}
+
+\subsection{Car to Car Communication}
+
+\subsection{Cloud to Car Communication}
+
+\section{Slutsats}
+
+
+
+
 
 
 
@@ -145,6 +163,12 @@ Huvudfokus kommer ligga på \emph{självkörande bilar} snarare fordon där det 
 	https://en.wikipedia.org/wiki/Automatic\_parking, 
 	
 	2016-11-24 (Hämtad 2016-12-01)
+	
+	\bibitem{CANphys}CAN in Automation (CiA): \emph{CAN physical layer},
+	
+	https://www.can-cia.org/can-knowledge/can/systemdesign-can-physicallayer/
+	
+	(hämtad 2016-12-04)
 %\bibitem{gsma}S. Parkvall: \emph{Broadband Wireless Access - HSPA and LTE}, http://www.s3.kth.se/signal/edu/s3\_seminar/2009/talks/sem2.pdf (last visited 2009-03-12)
 %\bibitem{hostmfl} P. Ödling, T. Magesacher, M. Berg, E. A. Sanchez, S. Höst and P. Börjesson: \emph{The Fourth Generation Broadband Concept}, IEEE Communications Magazine, Vol. 47, No. 1, pp. 63-69, IEEE Communication Society, 2009
 \end{thebibliography}
