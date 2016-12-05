@@ -38,13 +38,13 @@ Email: \{dat15ewi, dat15nhe\}@student.lu.se}}
 
 \section{Introduktion}
 \emph{Autonomous vehicles}, eller \emph{självkörande fordon}, är fordon som på ett eller annat sätt kan styra sig själv baserat på omgivningen. 
-\emph{SAE International} har definierat klassificeringsnivåer som inom industrin har blivit allmänt accepterade där fordon klassas från SAE level 0 - Ingen automatisering, till SAE level 5 - fullt automatiserad. \cite{SAE2014} 
+\emph{SAE International} har definierat klassificeringsnivåer som inom industrin har blivit allmänt accepterade där fordon klassas från SAE level 0 - Ingen automatisering, till SAE level 5 - Fullt automatiserad. \cite{SAE2014} 
 
 Denna rapport kommer behandla den kommunikation som behöver ske för att självkörning ska kunna fungera, det innebär både intern och extern kommunikation. 
 Det inkluderar teknologier som redan är standardiserade och välanvända samt potentiella teknologier som idag inte är färdigutvecklade men ger möjligheten att lösa problem som idag saknar en universellt använd lösning.
 
-Huvudfokus kommer ligga på \emph{självkörande bilar} snarare fordon då det finns ett stort intresse både bland klassiska biltillverkare så som Volvo, Mercedes-Benz och Ford och nya företag inom bilbranschen så som Google, Tesla och Uber att vara först ut. \cite{VolvoAD}\cite{MercedesAD}\cite{FordAD}\cite{GoogleAD}\cite{TeslaAD}\cite{UberAD}
-Den konkurrenspräglade miljön innebär att företagen har varit öppna om sina framsteg inom området och har därmed publicerat mycket information.
+Huvudfokus kommer ligga på \emph{självkörande bilar} snarare fordon då det finns ett stort intresse både bland klassiska biltillverkare så som Volvo, Mercedes-Benz och Ford och nya företag inom bilbranschen så som Google, Tesla och Uber att vara först ut. 
+Den konkurrenspräglade miljön innebär att företagen har varit öppna om sina framsteg inom området och har därmed publicerat mycket information. \cite{VolvoAD,MercedesAD,FordAD,GoogleAD,TeslaAD,UberAD}
 
 \section{Klassificering}
 \emph{SAE international standard J3016} definierar de olika nivåerna av självkörning enligt: \cite{SAE2014}
@@ -59,6 +59,15 @@ Den konkurrenspräglade miljön innebär att företagen har varit öppna om sina
 	\item [\textbf{nivå 5}] \emph{Full Automation}. Fordonet ska utöver nivå 4 kunna hantera alla miljöer och därmed aldrig kräva input från en potentiell förare.
 \end{labeling}
 
+\section{Bakgrund}
+Elektriska styrenheter, ECU (\emph{eng. electronic control units}), är microdatorer som används i bilar för att styra tidigare mekaniska delar för att förbättra bland annat precision och komfort. 
+I samband med att ECUer började bli en vital del för att förbättra bilupplevelsen krävdes ett system för att kommunicera mellan dem och det som blev de facto var CAN (Controller Area Network). (se sektion \ref{sec:CAN})
+
+CAN är en buss som består av två protokoll som täcker lager 1 och 2 av OSI-modellen och utvecklades till att börja med av Bosch under 80-talet innan det 1992 fick en internationell standard och fördes över till den nystartade associationen \emph{CAN in Automation} för vidare utveckling. \cite{CANhist}
+
+På senare år, i och med att antalet unika ECUer i bilar har ökat markant, har konkurrenter till CAN uppkommit som klarar högre bandbredd och som är mer pålitliga. Den främsta är FlexRay och används av flera europeiska tillverkare och används tillsammans med CAN. \cite{FlexRayWiki} (se sektion \ref{sec:FlexRay})
+
+När det kommer till kommunikation mellan bilar saknas fortfarande en gemensam, välanvänd standard. 
 \section{Nuvarande Implementation}
 
 
@@ -66,13 +75,13 @@ Den konkurrenspräglade miljön innebär att företagen har varit öppna om sina
 	\begin{center}
 		\resizebox{!}{60mm}{\includegraphics{CarCommunicationScheme.pdf}}
 	\end{center}
-	\caption{En förenklad modell över hur ett nät inuti en bil skulle kunna se ut.}
+	\caption{En förenklad modell över hur ett nät inuti en självkörande bil skulle kunna se ut. Delvis baserad på nätet över Volvo XC90 2015 \cite{xc90Scheme}}
 	\label{CarScheme}
 \end{figure}
 
 \section{Internal Vehicle Communication}
 
-\subsection{Controller Area Network}
+\subsection{Controller Area Network} \label{sec:CAN}
 
 \subsubsection{Physical Layer}
 Det fysiska lagret i CAN-Bussen består av tre sublager the physical coding (PCS) som är implementerat i CAN-bussens kontroll chip, the physical media attachment (PMA) som specificerar transceiverns egenskaper och the physical media-dependent sub-layers (PMS) som är programspecifik och är inte generellt standardiserad.
@@ -83,14 +92,25 @@ Om bussen är inaktiv så används den första fallande flanken till att globalt
 The physical media attachment sublagret är normalt implementerat i transceiver chipet. Inputen är TxD och RxD signalerna från CAN-buss kontrollen och outputen driver busslinjerna. \cite{CANphys}
 
 \subsubsection{Data Link Layer}
+Datalänks lagret är uppgjord av två protokoll Classical CAN som introducerades 1986 och implementerades 1988 och CAN FD som lanserades 2012 och som blev internationellt standardiserad 2015 i ISO 11898-1. Strukturen av CAN-buss dataramar är samma för både Classical CAN och CAN FD bara fält detaljer är olika. Dataramen består av Start-of-frame (SOF), Arbitration field, Control field, Data field, cyclic redundancy check field (CRC), Acknowledegement field (ACK), End-of-frame (EOF) och Intermission field (IMF). 
 
-\subsection{FlexRay}
+Båda CAN protokollen har gemensamma funktioner. Varje nod har rätten att be om att överföra data när som helst (multi-master capability). Metoden för att undvika överförings kollisioner är samma för båda protokollen. De använder sig av prioriteringslista och det meddelandet med högst prioritet får skicka först. CAN-buss identifierare som är en del av meddelandet och indicerar prioriteten. Desto lägre nummer värde på identifieraren desto högre prioritet. Alla typer av ramar skickas vi en broadcast i CAN-bussen. 
+
+The Classical CAN protokollet använder sig av en bithastighet i skilje och data fasen. Överföringshastigheten är begränsad till 1 MegaBit per sekund för korta nätverk. The payload för Classical CAN är begränsad till 8 bytes.
+
+The CAN FD protokollet har en payload 64 bytes. Hastigheten för skilje fasen för CAN FD är den samma som för Classical CAN medans hastigheten för data fasen är begränsad av transcieverns egenskaper och oscillatorns tolerans. \cite{CANdata}
+
+\subsection{FlexRay} \label{sec:FlexRay}
 
 \section{External Vehicle Communication}
 
-\subsection{Car to Car Communication}
-
 \subsection{Cloud to Car Communication}
+%Nuvarande mobilnät
+\subsection{Car to Car Communication}
+\subsubsection{IEEE 802.11p}
+\subsubsection{LTE ProSe}
+\subsubsection{5G}
+
 
 \section{Slutsats}
 
@@ -103,72 +123,71 @@ The physical media attachment sublagret är normalt implementerat i transceiver 
 
 \begin{thebibliography}{77}
 	\bibitem{SAE2014}SAE International: \emph{Automated Driving}, 
-	
-	http://www.sae.org/misc/pdfs/automated\_driving.pdf, 
-	
+	\url{http://www.sae.org/misc/pdfs/automated_driving.pdf}, 
 	2014 (hämtad 2016-12-02)
 	
 	\bibitem{VolvoAD}Volvo: \emph{Volvo Cars presents a unique solution for integrating self-driving cars into real traffic}, 
-	
-	https://www.media.volvocars.com/global/en-gb/media/pressreleases/158276/volvo-cars-presents-a-unique-system-solution-for-integrating-self-driving-cars-into-real-traffic, 
-	
+	\url{https://www.media.volvocars.com/global/en-gb/media/pressreleases/158276/volvo-cars-presents-a-unique-system-solution-for-integrating-self-driving-cars-into-real-traffic}, 
 	2015-02-19 (hämtad 2016-12-02)
 	
 	\bibitem{MercedesAD}Mercedes: \emph{The Mercedes-Benz F 015 Luxury in Motion.}, 
-	
-	https://www.mercedes-benz.com/en/mercedes-benz/innovation/research-vehicle-f-015-luxury-in-motion/ 
-	
+	\url{https://www.mercedes-benz.com/en/mercedes-benz/innovation/research-vehicle-f-015-luxury-in-motion/}
 	(hämtad 2016-12-02)
 	
 	\bibitem{FordAD}Ford: \emph{Ford börjar testa självkörande bilar i Europa under 2017}, 
-	
-	http://www.mynewsdesk.com/se/ford/pressreleases/ford-boerjar-testa-sjaelvkoerande-bilar-i-europa-under-2017-1670717, 
-	
+	\url{http://www.mynewsdesk.com/se/ford/pressreleases/ford-boerjar-testa-sjaelvkoerande-bilar-i-europa-under-2017-1670717}, 
 	2016-11-29 (Hämtad 2016-12-02)
 	
 	\bibitem{GoogleAD}Google: \emph{Google Self-Driving Car Project}, 
-	
-	https://www.google.com/selfdrivingcar/ 
-	
+	\url{https://www.google.com/selfdrivingcar/} 
 	(hämtad 2016-12-02)
 	
 	\bibitem{TeslaAD}Tesla: \emph{All Tesla Cars Being Produced Now Have Full Self-Driving Hardware}, 
-	
-	https://www.tesla.com/blog/all-tesla-cars-being-produced-now-have-full-self-driving-hardware, 
-	
+	\url{https://www.tesla.com/blog/all-tesla-cars-being-produced-now-have-full-self-driving-hardware}, 
 	2016-10-19 (hämtad 2016-12-02)
 	
 	\bibitem{UberAD}Uber: \emph{Pittsburgh, your Self-Driving Uber is arriving now}, 
-	
-	https://newsroom.uber.com/pittsburgh-self-driving-uber/, 
-	
+	\url{https://newsroom.uber.com/pittsburgh-self-driving-uber/}, 
 	2016-09-14 (hämtad 2016-12-02)
 	
 	\bibitem{ACC}Wikipedia: \emph{Autonomous cruise control}, 
-	
-	https://en.wikipedia.org/wiki/Autonomous\_cruise\_control\_system, 
-	
+	\url{https://en.wikipedia.org/wiki/Autonomous_cruise_control_system}, 
 	2016-12-01 (Hämtad 2016-12-01)
 	
 	\bibitem{LKA}Toyota: \emph{Lane Keeping Assist}, 
-	
-	http://www.toyota-global.com/innovation/safety\_technology/safety\_
-	
-	technology/technology\_file/active/lka.html 
-	
+	\url{http://www.toyota-global.com/innovation/safety_technology/safety_technology/technology_file/active/lka.html}
 	(Hämtad 2016-12-01)
 	
 	\bibitem{AP}Wikipedia: \emph{Automatic parking}, 
-	
-	https://en.wikipedia.org/wiki/Automatic\_parking, 
-	
+	\url{https://en.wikipedia.org/wiki/Automatic_parking}, 
 	2016-11-24 (Hämtad 2016-12-01)
 	
+	\bibitem{CANhist}CAN in Automation (CiA): \emph{History of CAN technology},
+	\url{https://www.can-cia.org/can-knowledge/can/can-history/}
+	
+	\bibitem{FlexRayWiki}Wikipedia: \emph{FlexRay},
+	\url{https://en.wikipedia.org/wiki/FlexRay},
+	2016-10-04 (hämtad 2016-12-04)
+	
+	\bibitem{xc90Scheme}K. Niesel: \emph{Volvo Car Software Center Day}, 
+	\url{http://www.software-center.se/digitalAssets/1521/1521374_kent-sw-center---software---need-for-speed.v001.pdf},
+	s. 2 (hämtad 2016-12-04)
+	
 	\bibitem{CANphys}CAN in Automation (CiA): \emph{CAN physical layer},
-	
-	https://www.can-cia.org/can-knowledge/can/systemdesign-can-physicallayer/
-	
+	\url{https://www.can-cia.org/can-knowledge/can/systemdesign-can-physicallayer/}
 	(hämtad 2016-12-04)
+	
+	\bibitem{CANdata}CAN in Automation (CiA): \emph{CAN data link layers in some detail},
+	\url{https://www.can-cia.org/can-knowledge/can/can-data-link-layers/}
+	(hämtad 2016-12-04)
+	
+	\bibitem{FlexRayOverview}National Instruments: \emph{FlexRay Automotive Communication Bus Overview},
+	\url{http://www.ni.com/white-paper/3352/en/},
+	2016-08-24 (hämtad 2016-12-04)
+	
+	\bibitem{citekey}The 5G Infrastructure Public Private Partnership: \emph{5G Automotive Vision},
+	\url{https://5g-ppp.eu/wp-content/uploads/2014/02/5G-PPP-White-Paper-on-Automotive-Vertical-Sectors.pdf},
+	2015-10-20 (hämtad 2016-12-04)
 %\bibitem{gsma}S. Parkvall: \emph{Broadband Wireless Access - HSPA and LTE}, http://www.s3.kth.se/signal/edu/s3\_seminar/2009/talks/sem2.pdf (last visited 2009-03-12)
 %\bibitem{hostmfl} P. Ödling, T. Magesacher, M. Berg, E. A. Sanchez, S. Höst and P. Börjesson: \emph{The Fourth Generation Broadband Concept}, IEEE Communications Magazine, Vol. 47, No. 1, pp. 63-69, IEEE Communication Society, 2009
 \end{thebibliography}
