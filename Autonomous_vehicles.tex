@@ -59,15 +59,20 @@ Den konkurrenspräglade miljön innebär att företagen har varit öppna om sina
 	\item [\textbf{nivå 5}] \emph{Full Automation}. Fordonet ska utöver nivå 4 kunna hantera alla miljöer och därmed aldrig kräva input från en potentiell förare.
 \end{labeling}
 
-\section{Bakgrund}
-Elektriska styrenheter, ECU (\emph{eng. electronic control units}), är microdatorer som används i bilar för att styra tidigare mekaniska delar för att förbättra bland annat precision och komfort. 
-I samband med att ECUer började bli en vital del för att förbättra bilupplevelsen krävdes ett system för att kommunicera mellan dem och det som blev de facto var CAN (Controller Area Network). (se sektion \ref{sec:CAN})
+\section{Teknisk bakgrund}
+En elektrisk styrenhet, ECU (\emph{eng. electronic control unit}), är en microdator som används i bilar för att styra tidigare mekaniska delar för att förbättra bland annat precision och komfort. 
+I samband med att ECU:er började bli en vital del för att förbättra bilupplevelsen krävdes ett system för att kommunicera mellan dem och det som blev de facto var CAN (Controller Area Network). (se sektion \ref{sec:CAN})
 
 CAN är en buss som består av två protokoll som täcker lager 1 och 2 av OSI-modellen och utvecklades till att börja med av Bosch under 80-talet innan det 1992 fick en internationell standard och fördes över till den nystartade associationen \emph{CAN in Automation} för vidare utveckling. \cite{CANhist}
 
-På senare år, i och med att antalet unika ECUer i bilar har ökat markant, har konkurrenter till CAN uppkommit som klarar högre bandbredd och som är mer pålitliga. Den främsta är FlexRay och används av flera europeiska tillverkare och används tillsammans med CAN. \cite{FlexRayWiki} (se sektion \ref{sec:FlexRay})
+På senare år, i och med att antalet unika ECU:er i bilar har ökat markant och därmed mängden information som skickas, har konkurrenter till CAN uppkommit som klarar högre bandbredd och som är mer pålitliga. Den främsta är FlexRay och används av flera europeiska tillverkare och används tillsammans med CAN. \cite{FlexRayWiki} (se sektion \ref{sec:FlexRay})
 
-När det kommer till kommunikation mellan bilar saknas fortfarande en gemensam, välanvänd standard. 
+När det kommer till kommunikation mellan bilar saknas fortfarande en gemensam, välanvänd standard. Ett konsortium mellan, bland andra, flera stora biltillverkare är ``CAR 2 CAR Communication Consortium''. De jobbar för att en gemensam standard i Europa och använder \emph{IEEE 802.11p} som är en vidareutveckling av \emph{IEEE 802.11} som är marknadsförs som Wi-Fi. En av styrkorna med teknologin är att noder (läs bilar, trafikljus, etc.) kan kommunicera direkt med varandra utan att kräva infrastruktur, så kallad D2D (\emph{Device To Device}) kommunikation. En stor nackdel med teknologin är dock räckvidden är kort och att fördröjningen kan bli lång i samband med trafikstockning. \cite{C2COrg,C2CDepl,ericsson5G,5GPPP}
+
+Alternativ är att låta all information passera genom en central server över dagens mobilnät\footnote{Syftar på de nät som kan skicka data, det vill säga LTE (\emph{Long Term Evolution}), UMTS (\emph{Universal Mobile Telecommunications System}) och EDGE (\emph{Enhanced Data Rates for GSM Evolution})}, D2I (\emph{Device To Infrastructure}) som tar hand om hur, och till vilka noder, datan ska skickas. Fördelar här är att data kan bearbetas och sammanställas av molnet men detta kräver att bilen alltid är uppkopplad mot internet vilket i sin tur kräver infrastruktur vilket kan vara problematiskt. \cite{VolvoSRA}
+
+Ett sista alternativ är en hybrid mellan D2D och D2I. Det finns en vidareutveckling av LTE som kallas LTE ProSe (\emph{Long Term Evolution Proximity Services}) som ger möjligheten till D2D-kommunikation. Nästa generations mobilnätsstandard, 5G, förväntas också inkludera D2D från början samt höga överföringshastigheter, låg latens och bra pålitlighet. \cite{5GPPP,LTED2D}
+
 \section{Nuvarande Implementation}
 
 
@@ -82,6 +87,7 @@ När det kommer till kommunikation mellan bilar saknas fortfarande en gemensam, 
 \section{Internal Vehicle Communication}
 
 \subsection{Controller Area Network} \label{sec:CAN}
+CAN (Controller area network) är en kommunikationsbuss utvecklad av företaget BOSCH som en multi-master, message broadcast system. Tillskillnad från USB och Ethernet sänder inte CAN-bussen stora datapaket från nod A till nod B (Point-to-Point) under uppsyn av en central buss ledare. I ett CAN-bus nätverk skickas information i en broadcast till hela nätverket, i till exempel en självkörande bil skickas många små meddelanden mellan olika ECU:er i en broadcast så att de olika meddelanden når alla nödvändiga ECU:er de vill säga datakonsekvens i varje nod i hela nätverkets. CAN-bussen är en ISO definierad seriell kommunikationsbuss. CAN-bussen har en hög immunitet mot elektrisk interfens och har en förmåga att göra självdiagnostik och reparera datafel. \cite{CANintr}
 
 \subsubsection{Physical Layer}
 Det fysiska lagret i CAN-Bussen består av tre sublager the physical coding (PCS) som är implementerat i CAN-bussens kontroll chip, the physical media attachment (PMA) som specificerar transceiverns egenskaper och the physical media-dependent sub-layers (PMS) som är programspecifik och är inte generellt standardiserad.
@@ -101,6 +107,11 @@ The Classical CAN protokollet använder sig av en bithastighet i skilje och data
 The CAN FD protokollet har en payload 64 bytes. Hastigheten för skilje fasen för CAN FD är den samma som för Classical CAN medans hastigheten för data fasen är begränsad av transcieverns egenskaper och oscillatorns tolerans. \cite{CANdata}
 
 \subsection{FlexRay} \label{sec:FlexRay}
+kommunikationsbussen är en feltolerant och höghastighets busssystem som är utvecklad i konsensus av biltillverkare och ledande leverantörer. FlexRayen är jämför med CAN-bussen mycket snabbare men mycket dyrare. FlexRayen kan ha en payload som är mer än 30 gånger större än vad CAN kan hantera.
+
+FlexRay protokollet är ett unikt tidsbestämt protokoll som ger möjligheter för deterministisk data som kommer in vid en förutsägbar tid nere på mikrosekund nivå, samt en CAN-buss liknande händelsedriven dynamisk data som hanterar mängd olika ramar. FlexRayen lyckas med denna hybrid av både statiska och dynamiska ramar med en förutbestäm kommunikationskretslopp som ger en förutbestämt rum för statisk och dynamisk data. 
+
+FlexRayens dataram består av ett huvud, själva datan och en svans. Huvudet är uppgjord av 40 bitar och har följande fält, status bitar (5 bitar), ram id (11 bitar), payload längd (7 bitar), huvud CRC (11 bitar) och cycle count (6 bitar). Själva datan kan vara upp till 256 bytes. Svansen är uppgjord av 24 bitar och det är tre stycken 8 bitars CRC fält som ska upptäck fel. \cite{FlexRayOverview}
 
 \section{External Vehicle Communication}
 
@@ -169,9 +180,37 @@ The CAN FD protokollet har en payload 64 bytes. Hastigheten för skilje fasen f�
 	\url{https://en.wikipedia.org/wiki/FlexRay},
 	2016-10-04 (hämtad 2016-12-04)
 	
+	\bibitem{C2COrg}CAR 2 CAR: \emph{Organisation},
+	\url{https://www.car-2-car.org/index.php?id=22}
+	(hämtad 2016-12-05)
+	
+	\bibitem{C2CDepl}CAR 2 CAR: \emph{Deployment of V2X services based on ITS-G5},
+	\url{https://www.car-2-car.org/index.php?eID=tx_nawsecuredl&u=0&g=0&t=1480979291&hash=668c1e8c7a38f3d6229fb9d9e196f14fcbd1152e&file=fileadmin/downloads/PDFs/CAR_2_CAR_Communication_Consortium_Statement_ITSG5.pdf},
+	2016-07-20 (hämtad 2016-12-05)
+	
+	\bibitem{ericsson5G}G. Fodor: \emph{D2D Communications – What Part Will It Play in 5G?},
+	\url{https://www.ericsson.com/research-blog/5g/device-device-communications/},
+	2014-07-10 (hämtad 2016-12-05)
+	
+	\bibitem{5GPPP}The 5G Infrastructure Public Private Partnership: \emph{5G Automotive Vision},
+	\url{https://5g-ppp.eu/wp-content/uploads/2014/02/5G-PPP-White-Paper-on-Automotive-Vertical-Sectors.pdf},
+	2015-10-20 (hämtad 2016-12-04)
+	
+	\bibitem{VolvoSRA}Volvo: \emph{Live smarter by sharing},
+	\url{http://www.volvocars.com/intl/about/our-innovation-brands/sensus/live-smarter-by-sharing}
+	(hämtad 2016-12-05)
+	
+	\bibitem{LTED2D}J. Schlienz, A. Roessler: \emph{Device to Device Communication in LTE},
+	\url{https://cdn.rohde-schwarz.com/pws/dl_downloads/dl_application/application_notes/1ma264/1MA264_0e_D2DComm.pdf}
+	(hämtad 2016-12-05)
+	
 	\bibitem{xc90Scheme}K. Niesel: \emph{Volvo Car Software Center Day}, 
 	\url{http://www.software-center.se/digitalAssets/1521/1521374_kent-sw-center---software---need-for-speed.v001.pdf},
 	s. 2 (hämtad 2016-12-04)
+	
+	\bibitem{CANintr}S. Corrigan: \emph{Introduction to the Controller Area Network (CAN)},
+	\url{http://www.ti.com/lit/an/sloa101a/sloa101a.pdf},
+	2008-07 (hämtad 2016-12-05)
 	
 	\bibitem{CANphys}CAN in Automation (CiA): \emph{CAN physical layer},
 	\url{https://www.can-cia.org/can-knowledge/can/systemdesign-can-physicallayer/}
@@ -185,9 +224,6 @@ The CAN FD protokollet har en payload 64 bytes. Hastigheten för skilje fasen f�
 	\url{http://www.ni.com/white-paper/3352/en/},
 	2016-08-24 (hämtad 2016-12-04)
 	
-	\bibitem{citekey}The 5G Infrastructure Public Private Partnership: \emph{5G Automotive Vision},
-	\url{https://5g-ppp.eu/wp-content/uploads/2014/02/5G-PPP-White-Paper-on-Automotive-Vertical-Sectors.pdf},
-	2015-10-20 (hämtad 2016-12-04)
 %\bibitem{gsma}S. Parkvall: \emph{Broadband Wireless Access - HSPA and LTE}, http://www.s3.kth.se/signal/edu/s3\_seminar/2009/talks/sem2.pdf (last visited 2009-03-12)
 %\bibitem{hostmfl} P. Ödling, T. Magesacher, M. Berg, E. A. Sanchez, S. Höst and P. Börjesson: \emph{The Fourth Generation Broadband Concept}, IEEE Communications Magazine, Vol. 47, No. 1, pp. 63-69, IEEE Communication Society, 2009
 \end{thebibliography}
