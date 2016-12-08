@@ -54,11 +54,19 @@ Den konkurrenspräglade miljön innebär att företagen har varit öppna om sina
 	\item [\textbf{nivå 0}] \emph{No Automation}. Fordonet saknar helt självkörning. Kan skicka varningar till föraren, men är inget krav.
 	\item [\textbf{nivå 1}] \emph{Driver Assistance}. Fordonet har vissa funktioner som påverkar det baserat på omgivningen. T.ex. ACC (Adaptive Cruise Control)\footnote{När fordonet kan ändra farthållaren baserat på hastigheten av framförvarande fordon\cite{ACC}}, LKA (Lane Keeping Assistance)\footnote{När fordonet kan hjälpa till att styra så att den håller sig inom nuvarande fil\cite{LKA}} och Parkeringshjälp\footnote{När fordonet hjälper till att parkera genom att ta över styrningen\cite{AP}}. Föraren måste dock alltid vara redo att ta över.
 	\item [\textbf{nivå 2}] \emph{Partial Automation}. Fordonet kan själv manövrera sig i kända förutsättningar, men när förutsättningar inte längre uppfylls måste föraren ta över genast.
-	\item [\textbf{nivå 3}] \emph{Conditional Automation}. Fordonet ska utöver nivå 2 kunna hantera dynamiska situationer i specifika miljöer, så som huvudleder där gångtrafikanter saknas. Detta innebär att föraren kan släppa fokus helt i dessa miljöer.  
+	\item [\textbf{nivå 3}] \emph{Conditional Automation}. Fordonet ska utöver nivå 2 kunna hantera dynamiska situationer i specifika miljöer, så som huvudleder där gångtrafikanter saknas. Detta innebär att fordonet kör sig själv men kan fortfarande kräva att föraren tar när som helst.
 	\item [\textbf{nivå 4}] \emph{High Automation}. Fordonet ska utöver nivå 3 kunna hantera situationer som inte förväntas uppstå och kunna agera därefter.
 	\item [\textbf{nivå 5}] \emph{Full Automation}. Fordonet ska utöver nivå 4 kunna hantera alla miljöer och därmed aldrig kräva input från en potentiell förare.
 \end{labeling}
 
+\section{Nuvarande Implementation}
+Begreppet självkörande bil brukar bland vanliga konsumenter syfta på att bilen har en nivå på 4 och uppåt och det finns inget ute på marknaden som uppfyller det nu.
+Teslas Autopilot, som funnits ute på marknaden i några år, brukar klassas som någonstans mellan nivå 2 och 3 då den bland annat har en kombination av ACC och LKA. 
+Googles självkörande bilar är nivå 4 då de saknar både ratt och gas- och bromspedal men klarar av få miljöer.
+Dessa finns dock inte ute på marknaden.
+Uber lanserade under hösten 2016 modifierade bilar från Ford och Volvo med nivå 4 som används som taxibilar i Pittsburg, CA, USA. Då dessa är mod konsumenter sitter det dock alltid en observatör som övervakar att systemet fungerar rätt.
+Volvo har som mål att lansera självkörande bilar med nivå 4 under 2017. Dessa ska ut till vanliga konsumenter utan att något för Volvo övervakar användandet. Det är dock på endast på några få huvudleder runt omkring Göteborg som självkörning kommer vara tillgänglig, på resterande vägar används bilen utan självkörning.
+\cite{UberAD,VergeAD,CWGoogleAD}
 \section{Teknisk bakgrund}
 En elektrisk styrenhet, ECU (\emph{eng. electronic control unit}), är en microdator som används i bilar för att styra tidigare mekaniska delar för att förbättra bland annat precision och komfort. 
 I samband med att ECU:er började bli en vital del för att förbättra bilupplevelsen krävdes ett system för att kommunicera mellan dem och det som blev de facto var CAN (Controller Area Network). (se sektion \ref{sec:CAN})
@@ -69,19 +77,18 @@ På senare år, i och med att antalet unika ECU:er i bilar har ökat markant och
 
 När det kommer till kommunikation mellan bilar saknas fortfarande en gemensam, välanvänd standard. Ett konsortium mellan, bland andra, flera stora biltillverkare är ``CAR 2 CAR Communication Consortium''. De jobbar för att en gemensam standard i Europa och använder \emph{IEEE 802.11p} som är en vidareutveckling av \emph{IEEE 802.11} som är marknadsförs som Wi-Fi. En av styrkorna med teknologin är att noder (läs bilar, trafikljus, etc.) kan kommunicera direkt med varandra utan att kräva infrastruktur, så kallad D2D (\emph{Device To Device}) kommunikation. En stor nackdel med teknologin är dock räckvidden är kort och att fördröjningen kan bli lång i samband med trafikstockning. \cite{C2COrg,C2CDepl,ericsson5G,5GPPP}
 
-Alternativ är att låta all information passera genom en central server över dagens mobilnät\footnote{Syftar på de nät som kan skicka data, det vill säga LTE (\emph{Long Term Evolution}), UMTS (\emph{Universal Mobile Telecommunications System}) och EDGE (\emph{Enhanced Data Rates for GSM Evolution})}, D2I (\emph{Device To Infrastructure}) som tar hand om hur, och till vilka noder, datan ska skickas. Fördelar här är att data kan bearbetas och sammanställas av molnet men detta kräver att bilen alltid är uppkopplad mot internet vilket i sin tur kräver infrastruktur vilket kan vara problematiskt. \cite{VolvoSRA}
+Alternativ är att låta all information passera genom en central server över dagens mobilnät\footnote{Syftar på de nät som kan skicka data, det vill säga 3G och 4G}, D2I (\emph{Device To Infrastructure}) som tar hand om hur, och till vilka noder, datan ska skickas. Fördelar här är att data kan bearbetas och sammanställas av molnet men detta kräver att bilen alltid är uppkopplad mot internet vilket i sin tur kräver infrastruktur vilket kan vara problematiskt. \cite{VolvoSRA}
 
 Ett sista alternativ är en hybrid mellan D2D och D2I. Det finns en vidareutveckling av LTE som kallas LTE ProSe (\emph{Long Term Evolution Proximity Services}) som ger möjligheten till D2D-kommunikation. Nästa generations mobilnätsstandard, 5G, förväntas också inkludera D2D från början samt höga överföringshastigheter, låg latens och bra pålitlighet. \cite{5GPPP,LTED2D}
 
-\section{Nuvarande Implementation}
-
-
+Så för att sammanfatta skulle en självkörande bil inom de kommande åren kunna ha ett nät av ECU:er enligt figur \ref{Img:CarScheme}.
+Bussen mellan alla stora delsystem är en FlexRay och bussen inom delsystem är CAN. Det finns ett delsystem som tar hand om att manövrera bilen, VCU, ett delsystem som tar hand om analysen av data (sensorer, kartor, information från andra noder) och bestämmer vad som ska hända, ADU, och ett delsystem som tar hand om den externa kommunikationen med andra noder och databaser, ECU. 
 \begin{figure}
 	\begin{center}
 		\resizebox{!}{60mm}{\includegraphics{CarCommunicationScheme.pdf}}
 	\end{center}
 	\caption{En förenklad modell över hur ett nät inuti en självkörande bil skulle kunna se ut. Delvis baserad på nätet över Volvo XC90 2015 \cite{xc90Scheme}}
-	\label{CarScheme}
+	\label{Img:CarScheme}
 \end{figure}
 
 \section{Internal Vehicle Communication}
@@ -107,15 +114,16 @@ The Classical CAN protokollet använder sig av en bithastighet i skilje och data
 The CAN FD protokollet har en payload 64 bytes. Hastigheten för skilje fasen för CAN FD är den samma som för Classical CAN medans hastigheten för data fasen är begränsad av transcieverns egenskaper och oscillatorns tolerans. \cite{CANdata}
 
 \subsection{FlexRay} \label{sec:FlexRay}
-kommunikationsbussen är en feltolerant och höghastighets busssystem som är utvecklad i konsensus av biltillverkare och ledande leverantörer. FlexRayen är jämför med CAN-bussen mycket snabbare men mycket dyrare. FlexRayen kan ha en payload som är mer än 30 gånger större än vad CAN kan hantera.
+kommunikationsbussen är en feltolerant och höghastighets busssystem som är utvecklad i konsensus av biltillverkare och ledande leverantörer. FlexRayen är jämfört med CAN-bussen mycket snabbare men mycket dyrare. FlexRayen kan ha en payload som är mer än 30 gånger större än vad CAN kan hantera.
 
 FlexRay protokollet är ett unikt tidsbestämt protokoll som ger möjligheter för deterministisk data som kommer in vid en förutsägbar tid nere på mikrosekund nivå, samt en CAN-buss liknande händelsedriven dynamisk data som hanterar mängd olika ramar. FlexRayen lyckas med denna hybrid av både statiska och dynamiska ramar med en förutbestäm kommunikationskretslopp som ger en förutbestämt rum för statisk och dynamisk data. 
 
 FlexRayens dataram består av ett huvud, själva datan och en svans. Huvudet är uppgjord av 40 bitar och har följande fält, status bitar (5 bitar), ram id (11 bitar), payload längd (7 bitar), huvud CRC (11 bitar) och cycle count (6 bitar). Själva datan kan vara upp till 256 bytes. Svansen är uppgjord av 24 bitar och det är tre stycken 8 bitars CRC fält som ska upptäck fel. \cite{FlexRayOverview}
 
 \section{External Vehicle Communication}
-
 \subsection{Cloud to Car Communication}
+
+
 %Nuvarande mobilnät
 \subsection{Car to Car Communication}
 \subsubsection{IEEE 802.11p}
@@ -172,6 +180,14 @@ FlexRayens dataram består av ett huvud, själva datan och en svans. Huvudet är
 	\bibitem{AP}Wikipedia: \emph{Automatic parking}, 
 	\url{https://en.wikipedia.org/wiki/Automatic_parking}, 
 	2016-11-24 (Hämtad 2016-12-01)
+	
+	\bibitem{VergeAD}J. Golson: \emph{Volvo autonomous car engineer calls Tesla’s Autopilot a ‘wannabe'},
+	\url{http://www.theverge.com/2016/4/27/11518826/volvo-tesla-autopilot-autonomous-self-driving-car},
+	2016-04-27 (hämtad 2016-12-06)
+	
+	\bibitem{CWGoogleAD}D. Storm: \emph{Did you know Google's self-driving cars can't handle 99\% of roads in the US?},
+	\url{http://www.computerworld.com/article/2599426/emerging-technology/did-you-know-googles-self-driving-cars-cant-handle-99-of-roads-in-the-us.html},
+	2014-08-28 (hämtad 2016-12-06)
 	
 	\bibitem{CANhist}CAN in Automation (CiA): \emph{History of CAN technology},
 	\url{https://www.can-cia.org/can-knowledge/can/can-history/}
