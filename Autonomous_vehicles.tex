@@ -7,7 +7,11 @@
 \usepackage[utf8]{inputenc} 
 
 \usepackage[swedish]{babel}
+
 \usepackage{url}
+\makeatletter
+\g@addto@macro{\UrlBreaks}{\UrlOrds}
+\makeatother
 
 \usepackage{scrextend}
 
@@ -114,19 +118,36 @@ The Classical CAN protokollet använder sig av en bithastighet i skilje och data
 The CAN FD protokollet har en payload 64 bytes. Hastigheten för skilje fasen för CAN FD är den samma som för Classical CAN medans hastigheten för data fasen är begränsad av transcieverns egenskaper och oscillatorns tolerans. \cite{CANdata}
 
 \subsection{FlexRay} \label{sec:FlexRay}
-kommunikationsbussen är en feltolerant och höghastighets busssystem som är utvecklad i konsensus av biltillverkare och ledande leverantörer. FlexRayen är jämfört med CAN-bussen mycket snabbare men mycket dyrare. FlexRayen kan ha en payload som är mer än 30 gånger större än vad CAN kan hantera.
+kommunikationsbussen är en feltolerant och höghastighets bussystem som är utvecklad i konsensus av biltillverkare och ledande leverantörer. 
+FlexRay:en är jämfört med CAN-bussen mycket snabbare men mycket dyrare. 
+FlexRay:en kan ha en payload som är mer än 30 gånger större än vad CAN kan hantera.
 
-FlexRay protokollet är ett unikt tidsbestämt protokoll som ger möjligheter för deterministisk data som kommer in vid en förutsägbar tid nere på mikrosekund nivå, samt en CAN-buss liknande händelsedriven dynamisk data som hanterar mängd olika ramar. FlexRayen lyckas med denna hybrid av både statiska och dynamiska ramar med en förutbestäm kommunikationskretslopp som ger en förutbestämt rum för statisk och dynamisk data. 
+FlexRay protokollet är ett unikt tidsbestämt protokoll som ger möjligheter för deterministisk data som kommer in vid en förutsägbar tid nere på mikrosekund nivå, samt en CAN-buss liknande händelsedriven dynamisk data som hanterar mängd olika ramar. 
+FlexRay:en lyckas med denna hybrid av både statiska och dynamiska ramar med en förutbestäm kommunikationskretslopp som ger en förutbestämt rum för statisk och dynamisk data. 
 
-FlexRayens dataram består av ett huvud, själva datan och en svans. Huvudet är uppgjord av 40 bitar och har följande fält, status bitar (5 bitar), ram id (11 bitar), payload längd (7 bitar), huvud CRC (11 bitar) och cycle count (6 bitar). Själva datan kan vara upp till 256 bytes. Svansen är uppgjord av 24 bitar och det är tre stycken 8 bitars CRC fält som ska upptäck fel. \cite{FlexRayOverview}
+FlexRay:ens dataram består av ett huvud, själva datan och en svans. Huvudet är uppgjord av 40 bitar och har följande fält, status bitar (5 bitar), ram id (11 bitar), payload längd (7 bitar), huvud CRC (11 bitar) och cycle count (6 bitar). 
+Själva datan kan vara upp till 256 bytes. Svansen är uppgjord av 24 bitar och det är tre stycken 8 bitars CRC fält som ska upptäck fel. \cite{FlexRayOverview}
 
 \section{External Vehicle Communication}
 \subsection{Cloud to Car Communication}
+Eftersom access till internet är ett krav om en biltillverkares bilar ska kunna komma åt dess molntjänst är dagens mobilnät väl anpassade för detta syftet då länder med välutvecklad infrastruktur har täckning över näst intill hela landet. 
+Eftersom det skickas över internet används IP (\emph{Internet Protocol}) som nätverksprotokoll och IP-paket kommer då skickas mellan bilar och molnet. 
+Informationen som skickas kan innehålla konfidentiell data så som position, detta innebär att applikations protokollet som används antagligen använder någon typ av kryptering.
 
+Eftersom fördröjningen redan är relativt hög om data ska gå mellan två bilar används denna lösningen inte till tidskritiska applikationer så som att undvika kollision. 
+Det innebär att transportprotokollet som används antagligen värderar att data kommer fram högre än låg fördröjning. 
+Detta skulle exempelvis kunna vara TCP (\emph{Transmission Control Protocol}) som kommer skicka om alla paket som inte konfirmerats att det kommit fram. \cite{TCP}
 
-%Nuvarande mobilnät
+I Europa finns det en standard för att koda bilrelaterad data kallad DATEX \textrm{II}. 
+Denna använder XML (\emph{Extensible Markup Language}) för att koda data och HTTP (\emph{HyperText Transfer Protocol}) är ett vanligt applikationsprotokoll för att skicka XML över  internet.
+Eftersom kryptering dock är en vital del för typen av data som skickas används troligtvis HTTPS istället. 
+HTTPS bygger på HTTP men med tillägget att det använder TLS (\emph{Transport Layer Security}) för att bland annat kryptera data och försäkra integritet mellan bil och server. \cite{DATEXII,HTTPS,TLS}
+
 \subsection{Car to Car Communication}
 \subsubsection{IEEE 802.11p}
+IEEE 802.11p eller WAVE (\emph{Wireless Access in Vehicular Environments}) är en underkategori till IEEE 802.11 som vanligtvis brukar kallas för Wi-Fi. 
+WAVE utnyttjar på det fysiska lagret OFDM (\emph{Orthogonal Frequency Division Multiplexing}) och använder CSMA/CA (\emph{Carrier Sense Multiple Access with Collision Avoidance})
+
 \subsubsection{LTE ProSe}
 \subsubsection{5G}
 
@@ -240,6 +261,21 @@ FlexRayens dataram består av ett huvud, själva datan och en svans. Huvudet är
 	\url{http://www.ni.com/white-paper/3352/en/},
 	2016-08-24 (hämtad 2016-12-04)
 	
+	\bibitem{TCP}Information Sciences Institute	University of Southern California: \emph{Transmission Control Protocol},
+	\url{https://tools.ietf.org/html/rfc793},
+	1981-09 (hämtad 2016-12-08)
+	
+	\bibitem{DATEXII}DATEX: \emph{DATEX II XML Schema 2.2},
+	\url{http://www.datex2.eu/content/datex-ii-xml-schema-22},
+	2013-05-22 (hämtad 2016-12-08)
+	
+	\bibitem{HTTPS}The Internet Society: \emph{HTTP Over TLS},
+	\url{https://tools.ietf.org/html/rfc2818},
+	2000-05 (hämtad 2016-12-08)
+	
+	\bibitem{TLS}Network Working Group: \emph{The Transport Layer Security (TLS) Protocol},
+	\url{https://tools.ietf.org/html/rfc5246},
+	2008-08 (hämtad 2016-12-08)
 %\bibitem{gsma}S. Parkvall: \emph{Broadband Wireless Access - HSPA and LTE}, http://www.s3.kth.se/signal/edu/s3\_seminar/2009/talks/sem2.pdf (last visited 2009-03-12)
 %\bibitem{hostmfl} P. Ödling, T. Magesacher, M. Berg, E. A. Sanchez, S. Höst and P. Börjesson: \emph{The Fourth Generation Broadband Concept}, IEEE Communications Magazine, Vol. 47, No. 1, pp. 63-69, IEEE Communication Society, 2009
 \end{thebibliography}
