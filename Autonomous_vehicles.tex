@@ -146,15 +146,40 @@ HTTPS bygger på HTTP men med tillägget att det använder TLS (\emph{Transport 
 \subsection{Car to Car Communication}
 \subsubsection{IEEE 802.11p}
 IEEE 802.11p eller WAVE (\emph{Wireless Access in Vehicular Environments}) är en underkategori till IEEE 802.11 som vanligtvis brukar kallas för Wi-Fi. 
-WAVE utnyttjar på det fysiska lagret OFDM (\emph{Orthogonal Frequency Division Multiplexing}) och använder CSMA/CA (\emph{Carrier Sense Multiple Access with Collision Avoidance})
+WAVE utnyttjar på det fysiska lagret OFDM (\emph{Orthogonal Frequency Division Multiplexing}) och är uppdelat på flera band på 10~MHz var vid 5.9~GHz. 
+Ett av banden är en så kallad \emph{Control Channel} och all D2D kommunikation förväntas gå över detta bandet. 
+WAVE använder CSMA/CA (\emph{Carrier Sense Multiple Access with Collision Avoidance}) som accessmetod, detta tillsammans med den ensamma kanalen innebär att i samband med att trafiken ökar så ökar fördröjningen eftersom CSMA/CA ökar väntetiden på att skicka meddelanden logaritmiskt om kanalen är upptagen.
+Ett annat problem med CSMA/CA är om noder inte syns, se figur \ref{Img:HiddenNode}. %bild på det
+Det innebär att en nod kan tro att meddelandet kom fram ostört men egentligen fungerade det inte.
 
+\begin{figure}
+	\begin{center}
+		\resizebox{!}{60mm}{\includegraphics{CarCommunicationScheme.pdf}}
+	\end{center}
+	\caption{Visualisering av problemet när noder inte syns för sändare av meddelanden.}
+	\label{Img:HiddenNode}
+\end{figure}
+
+På grund av de fysiska egenskaperna av 5.9~GHz-bandet så är räckvidden som mest en halv kilometer och det är därför inte en rimlig lösning för applikationer där ett krav på längre avstånd är ett måste. 
+En typisk miljö som är problematisk är motorvägar då de höga hastigheterna gör att tidsskillnaden mellan bilar på 500 meters avstånd inte är speciellt stor. \cite{5GPPP}
 \subsubsection{LTE ProSe}
+LTE ProSe (\emph{Long Term Evolution Proximity Services}) är en vidareutveckling av LTE som utöver när noden har E-UTRAN-täckning\footnote{Evolved Universal Terrestrial Radio Access Network är interfacet som används i LTE för att kommunicera mellan radiostationer och noder} även kan kommunicera direkt mellan noder.
+Metoden som används i kommunikation mellan noder är SC-FDMA (\emph{Single-Carrier Frequency-Division Multiple Access}), vilket är samma som används i uplink till radiostationer. Det finns två lägen:
+\begin{enumerate}
+	\item Noderna är uppkopplade mot en radiostation och radiostationen modererar när noderna får skicka meddelanden till varandra så meddelanden aldrig krockar.
+	\item Noderna saknar uppkoppling och väljer själva på vilket band och när de skickar meddelandena.
+\end{enumerate}
+Läge 2 ger liknande problem som CSMA/CA då trafik kan krocka och meddelanden kan inte försäkras att de skickas inom ett visst tidsspann.
+Men eftersom E-UTRAN-täckning i trafiktunga områden ofta finns löser läge 1 problemen som uppstår i IEEE 802.11p.
+Eftersom samma modul används för både LTE och LTE ProSe kan teknikerna varieras med varandra så den bästa lösningen för olika problem kan användas.
+LTE ProSe är dock inte designat för V2X-kommunikation (Vehicle To Everything) så det saknar stöd för protokoll och säkerhetslager som denna typen av kommunikation kräver.
 \subsubsection{5G}
-
+5G är nästa generations mobila kommunikationsstandard och är inte färdigställd än. Många lovande funktioner för V2X-kommunikation väntas dock så som låg fördröjning, hög pålitlighet och support för högre anslutningstäthet.
+Det kommer inkludera D2D-kommunikation från början och täcka ett stort spektrum av nätverksband så både kommunikation mellan bilar nära varandra och långt ifrån varandra är stabil.
+5G är alltså en god kandidat till att bli standarden för denna typen av kommunikation, men eftersom varken standarden eller faktisk hårdvara som utnyttjar den är färdig utvecklad finns en viss osäkerhet.
 
 \section{Slutsats}
-
-
+Utvecklingen av självkörande bilar är fortfarande i ett tidigt stadium. Internt i bilen kan dock gamla standarder användas då elektrifiering av bilar pågått under en längre tid och självkörning bara är en vidareutveckling av det. När det kommer till extern kommunikation är det dock fortfarande mycket som är oklart. Biltillverkarna är fortfarande inte överens när det kommer till en gemensam standard men för hoppningen är att 5G ska kunna förena biltillverkarna.
 
 
 
