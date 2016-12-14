@@ -36,7 +36,8 @@ Email: \{dat15ewi, dat15nhe\}@student.lu.se}}
 \maketitle
 
 \begin{abstract}
-Självkörande fordon är en teknik som på senare år har gjort stora framsteg men trots det är den fortfarande i sin uppstartsfas. Den interna kommunikationen är nästan helt standardiserad medans den externa kommunikationen är vitt skild mellan olika bilföretag men 5G är troligtvis framtiden.
+Självkörande fordon är en teknik som på senare år har gjort stora framsteg men trots det är den fortfarande i sin uppstartsfas. 
+Den interna kommunikationen är nästan helt standardiserad medan den externa kommunikationen är vitt skild mellan olika bilföretag, men 5G är troligtvis framtiden.
 \end{abstract}
 
 
@@ -45,9 +46,9 @@ Självkörande fordon är en teknik som på senare år har gjort stora framsteg 
 \emph{SAE International} har definierat klassificeringsnivåer som inom industrin har blivit allmänt accepterade där fordon klassas från SAE level 0 - Ingen automatisering, till SAE level 5 - Fullt automatiserad. \cite{SAE2014} 
 
 Denna rapport kommer behandla den kommunikation som behöver ske för att självkörning ska kunna fungera, det innebär både intern och extern kommunikation. 
-Det inkluderar teknologier som redan är standardiserade och välanvända samt potentiella teknologier som idag inte är färdigutvecklade men ger möjligheten att lösa problem som idag saknar en universellt använd lösning.
+Det inkluderar teknologier som redan är standardiserade och välanvända samt potentiella teknologier som idag inte är färdigutvecklade, men ger möjligheten att lösa problem som idag saknar en universellt använd lösning.
 
-Huvudfokus kommer ligga på \emph{självkörande bilar} snarare fordon då det finns ett stort intresse både bland klassiska biltillverkare så som Volvo, Mercedes-Benz och Ford och nya företag inom bilbranschen så som Google, Tesla och Uber att vara först ut. 
+Huvudfokus kommer ligga på \emph{självkörande bilar} snarare än fordon då det finns ett stort intresse både bland klassiska biltillverkare så som Volvo, Mercedes-Benz och Ford och nya företag inom bilbranschen så som Google, Tesla och Uber att vara först ut. 
 Den konkurrenspräglade miljön innebär att företagen har varit öppna om sina framsteg inom området och har därmed publicerat mycket information. \cite{VolvoAD,MercedesAD,FordAD,GoogleAD,TeslaAD,UberAD}
 
 \section{Klassificering}
@@ -58,7 +59,7 @@ Den konkurrenspräglade miljön innebär att företagen har varit öppna om sina
 	\item [\textbf{nivå 0}] \emph{No Automation}. Fordonet saknar helt självkörning. Kan skicka varningar till föraren, men är inget krav.
 	\item [\textbf{nivå 1}] \emph{Driver Assistance}. Fordonet har vissa funktioner som påverkar det baserat på omgivningen. T.ex. ACC (Adaptive Cruise Control)\footnote{När fordonet kan ändra farthållaren baserat på hastigheten av framförvarande fordon\cite{ACC}}, LKA (Lane Keeping Assistance)\footnote{När fordonet kan hjälpa till att styra så att den håller sig inom nuvarande fil\cite{LKA}} och Parkeringshjälp\footnote{När fordonet hjälper till att parkera genom att ta över styrningen\cite{AP}}. Föraren måste dock alltid vara redo att ta över.
 	\item [\textbf{nivå 2}] \emph{Partial Automation}. Fordonet kan själv manövrera sig i kända förutsättningar, men när förutsättningar inte längre uppfylls måste föraren ta över genast.
-	\item [\textbf{nivå 3}] \emph{Conditional Automation}. Fordonet ska utöver nivå 2 kunna hantera dynamiska situationer i specifika miljöer, så som huvudleder där gångtrafikanter saknas. Detta innebär att fordonet kör sig själv men kan fortfarande kräva att föraren tar när som helst.
+	\item [\textbf{nivå 3}] \emph{Conditional Automation}. Fordonet ska utöver nivå 2 kunna hantera dynamiska situationer i specifika miljöer, så som huvudleder där gångtrafikanter saknas. Detta innebär att fordonet kör sig själv, men kan fortfarande kräva att föraren tar över när som helst.
 	\item [\textbf{nivå 4}] \emph{High Automation}. Fordonet ska utöver nivå 3 kunna hantera situationer som inte förväntas uppstå och kunna agera därefter.
 	\item [\textbf{nivå 5}] \emph{Full Automation}. Fordonet ska utöver nivå 4 kunna hantera alla miljöer och därmed aldrig kräva input från en potentiell förare.
 \end{labeling}
@@ -68,20 +69,21 @@ Begreppet självkörande bil brukar bland vanliga konsumenter syfta på att bile
 Teslas Autopilot, som funnits ute på marknaden i några år, brukar klassas som någonstans mellan nivå 2 och 3 då den bland annat har en kombination av ACC och LKA. 
 Googles självkörande bilar är nivå 4 då de saknar både ratt och gas- och bromspedal men klarar av få miljöer.
 Dessa finns dock inte ute på marknaden.
-Uber lanserade under hösten 2016 modifierade bilar från Ford och Volvo med nivå 4 som används som taxibilar i Pittsburg, CA, USA. Då dessa är mod konsumenter sitter det dock alltid en observatör som övervakar att systemet fungerar rätt.
-Volvo har som mål att lansera självkörande bilar med nivå 4 under 2017. Dessa ska ut till vanliga konsumenter utan att något för Volvo övervakar användandet. Det är dock på endast på några få huvudleder runt omkring Göteborg som självkörning kommer vara tillgänglig, på resterande vägar används bilen utan självkörning.
+Uber lanserade under hösten 2016 modifierade bilar från Ford och Volvo med nivå 4 som används som taxibilar i Pittsburg, CA, USA. Då dessa är mot konsumenter sitter det dock alltid en observatör som övervakar att systemet fungerar rätt.
+Volvo har som mål att lansera självkörande bilar med nivå 4 under 2017. Dessa ska ut till vanliga konsumenter utan att något för Volvo övervakar användandet. Det är dock endast på några få huvudleder runt omkring Göteborg som självkörning kommer vara tillgänglig, på resterande vägar används bilen utan självkörning.
 \cite{UberAD,VergeAD,CWGoogleAD}
+
 \section{Teknisk bakgrund}
 En elektrisk styrenhet, ECU (\emph{eng. electronic control unit}), är en microdator som används i bilar för att styra tidigare mekaniska delar för att förbättra bland annat precision och komfort. 
 I samband med att ECU:er började bli en vital del för att förbättra bilupplevelsen krävdes ett system för att kommunicera mellan dem och det som blev de facto var CAN (Controller Area Network). (se sektion \ref{sec:CAN})
 
-CAN är en buss som består av två protokoll som täcker lager 1 och 2 av OSI-modellen och utvecklades till att börja med av Bosch under 80-talet innan det 1992 fick en internationell standard och fördes över till den nystartade associationen \emph{CAN in Automation} för vidare utveckling. \cite{CANhist}
+CAN är en buss som består av två protokoll som täcker lager 1 och 2 av OSI-modellen och utvecklades till att börja med av Bosch under 80-talet innan det 1992 fick en internationell standard och fördes över till den nystartade associationen \emph{CAN in Automation} för vidareutveckling. \cite{CANhist}
 
-På senare år, i och med att antalet unika ECU:er i bilar har ökat markant och därmed mängden information som skickas, har konkurrenter till CAN uppkommit som klarar högre bandbredd och som är mer pålitliga. Den främsta är FlexRay och används av flera europeiska tillverkare och används tillsammans med CAN. \cite{FlexRayWiki} (se sektion \ref{sec:FlexRay})
+På senare år, i och med att antalet unika ECU:er i bilar har ökat markant och därmed mängden information som skickas, har konkurrenter till CAN uppkommit som klarar högre bandbredd och som är mer pålitliga. Den främsta är FlexRay som används av flera europeiska tillverkare och används tillsammans med CAN. \cite{FlexRayWiki} (se sektion \ref{sec:FlexRay})
 
-När det kommer till kommunikation mellan bilar saknas fortfarande en gemensam, välanvänd standard. Ett konsortium mellan, bland andra, flera stora biltillverkare är ``CAR 2 CAR Communication Consortium''. De jobbar för att en gemensam standard i Europa och använder \emph{IEEE 802.11p} som är en vidareutveckling av \emph{IEEE 802.11} som är marknadsförs som Wi-Fi. En av styrkorna med teknologin är att noder (läs bilar, trafikljus, etc.) kan kommunicera direkt med varandra utan att kräva infrastruktur, så kallad D2D (\emph{Device To Device}) kommunikation. En stor nackdel med teknologin är dock räckvidden är kort och att fördröjningen kan bli lång i samband med trafikstockning. \cite{C2COrg,C2CDepl,ericsson5G,5GPPP}
+När det kommer till kommunikation mellan bilar saknas fortfarande en gemensam, välanvänd standard. Ett konsortium mellan, bland andra, flera stora biltillverkare är ``CAR 2 CAR Communication Consortium''. De jobbar för att en gemensam standard i Europa och använder \emph{IEEE 802.11p} som är en vidareutveckling av \emph{IEEE 802.11} som marknadsförs som Wi-Fi. En av styrkorna med teknologin är att noder (läs bilar, trafikljus, etc.) kan kommunicera direkt med varandra utan att kräva infrastruktur, så kallad D2D (\emph{Device To Device}) kommunikation. En stor nackdel med teknologin är dock att räckvidden är kort och att fördröjningen kan bli lång i samband med trafikstockning. \cite{C2COrg,C2CDepl,ericsson5G,5GPPP}
 
-Alternativ är att låta all information passera genom en central server över dagens mobilnät\footnote{Syftar på de nät som kan skicka data, det vill säga 3G och 4G}, D2I (\emph{Device To Infrastructure}) som tar hand om hur, och till vilka noder, datan ska skickas. Fördelar här är att data kan bearbetas och sammanställas av molnet men detta kräver att bilen alltid är uppkopplad mot internet vilket i sin tur kräver infrastruktur vilket kan vara problematiskt. \cite{VolvoSRA}
+Alternativ är att låta all information passera genom en central server över dagens mobilnät\footnote{Syftar på de nät som kan skicka data, det vill säga GSM, UMTS och LTE}, D2I (\emph{Device To Infrastructure}) som tar hand om hur, och till vilka noder, datan ska skickas. Fördelar här är att data kan bearbetas och sammanställas av molnet och skickas ut till rätt bilar. Detta kräver dock att bilen alltid är uppkopplad mot internet vilket i sin tur kräver infrastruktur och det kan vara för problematiskt. \cite{VolvoSRA}
 
 Ett sista alternativ är en hybrid mellan D2D och D2I. Det finns en vidareutveckling av LTE som kallas LTE ProSe (\emph{Long Term Evolution Proximity Services}) som ger möjligheten till D2D-kommunikation. Nästa generations mobilnätsstandard, 5G, förväntas också inkludera D2D från början samt höga överföringshastigheter, låg latens och bra pålitlighet. \cite{5GPPP,LTED2D}
 
@@ -98,24 +100,22 @@ Bussen mellan alla stora delsystem är en FlexRay och bussen inom delsystem är 
 \section{Internal Vehicle Communication}
 
 \subsection{Controller Area Network} \label{sec:CAN}
-CAN (Controller area network) är en kommunikationsbuss utvecklad av företaget BOSCH som en multi-master, message broadcast system. Tillskillnad från USB och Ethernet sänder inte CAN-bussen stora datapaket från nod A till nod B (Point-to-Point) under uppsyn av en central buss ledare. I ett CAN-bus nätverk skickas information i en broadcast till hela nätverket, i till exempel en självkörande bil skickas många små meddelanden mellan olika ECU:er i en broadcast så att de olika meddelanden når alla nödvändiga ECU:er de vill säga datakonsekvens i varje nod i hela nätverkets. CAN-bussen är en ISO definierad seriell kommunikationsbuss. CAN-bussen har en hög immunitet mot elektrisk interfens och har en förmåga att göra självdiagnostik och reparera datafel. \cite{CANintr}
+CAN (Controller area network) är en kommunikationsbuss utvecklad av företaget BOSCH som en multi-master, message broadcast system. Till skillnad från USB och Ethernet sänder inte CAN-bussen stora datapaket från nod A till nod B (Point-to-Point) under uppsyn av en central buss ledare. I ett CAN-bus nätverk skickas information i en broadcast till hela nätverket, i till exempel en självkörande bil skickas många små meddelanden mellan olika ECU:er i en broadcast så att de olika meddelanden når alla nödvändiga ECU:er de vill säga datakonsekvens i varje nod i hela nätverket. CAN-bussen är en ISO definierad seriell kommunikationsbuss. CAN-bussen har en hög immunitet mot elektrisk interferens och har en förmåga att göra självdiagnostik och reparera datafel. \cite{CANintr}
 
 \subsubsection{Physical Layer}
-Det fysiska lagret i CAN-Bussen består av tre sublager the physical coding (PCS) som är implementerat i CAN-bussens kontroll chip, the physical media attachment (PMA) som specificerar transceiverns egenskaper och the physical media-dependent sub-layers (PMS) som är programspecifik och är inte generellt standardiserad.
+Det fysiska lagret i CAN-Bussen består av tre sublager the physical coding (PCS) som är implementerat i CAN-bussens styrchip, the physical media attachment (PMA) som specificerar transceiverns egenskaper och the physical media-dependent sub-layers (PMS) som är programspecifik och är inte generellt standardiserad.
 
-The physical coding sublagret i CAN-bussen använder sig av NRZ kodning, jämför med manchester kodning så behöver man inte med NRZ i varje bit ha en fallande eller stigande flank utan signalen kan hållas konstant över en längre period om de överförda bitarna har samma logiska värde. Således måste åtgärder vidtas för att försäkra sig om att det maximala tillåtna intervallet mellan två signalflanker inte överskrids. Detta är viktigt för synkroniseringen. Åtgärdens som gör är att CAN-bussen använder ett protokoll som gör att när det kommer fem bitar av samma värde lägger CAN-buss kontrollen in en bit av motsattvärde, även kallat ”bit stuffing”. Sedan gör den mottagande CAN-buss noden det motsatta och tar bort de instoppade bitarna.
-Om bussen är inaktiv så används den första fallande flanken till att globalt synkronisera alla CAN-buss kontroller. 
-
-The physical media attachment sublagret är normalt implementerat i transceiver chipet. Inputen är TxD och RxD signalerna från CAN-buss kontrollen och outputen driver busslinjerna. \cite{CANphys}
+``The physical coding''-sublagret i CAN-bussen använder sig av NRZ (\emph{Non-Return-to-Zero}) kodning, jämför med manchester kodning så behöver man inte med NRZ i varje bit ha en fallande eller stigande flank utan signalen kan hållas konstant över en längre period om de överförda bitarna har samma logiska värde. Således måste åtgärder vidtas för att försäkra sig om att det maximala tillåtna intervallet mellan två signalflanker inte överskrids. Detta är viktigt för synkroniseringen. Åtgärdens som gör är att CAN-bussen använder ett protokoll som gör att när det kommer fem bitar av samma värde lägger ett styrchip på CAN-bussen in en bit av motsatt värde, även kallat ``bit stuffing''. Sedan gör den mottagande CAN-bussnoden det motsatta och tar bort de instoppade bitarna.
+Om bussen är inaktiv så används den första fallande flanken till att globalt synkronisera alla styrchip på CAN-buss. \cite{CANphys}
 
 \subsubsection{Data Link Layer}
-Datalänks lagret är uppgjord av två protokoll Classical CAN som introducerades 1986 och implementerades 1988 och CAN FD som lanserades 2012 och som blev internationellt standardiserad 2015 i ISO 11898-1. Strukturen av CAN-buss dataramar är samma för både Classical CAN och CAN FD bara fält detaljer är olika. Dataramen består av Start-of-frame (SOF), Arbitration field, Control field, Data field, cyclic redundancy check field (CRC), Acknowledegement field (ACK), End-of-frame (EOF) och Intermission field (IMF). 
+Datalänks lagret är uppgjord av två protokoll Classical CAN och CAN FD. Classical CAN implementerades 1988 men introducerades redan 1986. CAN FD lanserades 2012 men blev 2015 en internationell ISO standard 2015 Strukturen av CAN-buss dataramar är samma för både Classical CAN och CAN FD bara fält detaljer är olika. Dataramen består av Start-of-frame (SOF), Arbitration field, Control field, Data field, cyclic redundancy check field (CRC), Acknowledegement field (ACK), End-of-frame (EOF) och Intermission field (IMF). 
 
-Båda CAN protokollen har gemensamma funktioner. Varje nod har rätten att be om att överföra data när som helst (multi-master capability). Metoden för att undvika överförings kollisioner är samma för båda protokollen. De använder sig av prioriteringslista och det meddelandet med högst prioritet får skicka först. CAN-buss identifierare som är en del av meddelandet och indicerar prioriteten. Desto lägre nummer värde på identifieraren desto högre prioritet. Alla typer av ramar skickas vi en broadcast i CAN-bussen. 
+Båda CAN protokollen har gemensamma funktioner. Varje nod har rätten att be om att överföra data när som helst (multi-master capability). Metoden för att undvika överförings kollisioner är samma för båda protokollen. De använder sig av prioriteringslista och det meddelandet med högst prioritet får skicka först. CAN-buss identifierare som är en del av meddelandet och indicerar prioriteten. Desto lägre nummer värde på identifieraren desto högre prioritet. Alla typer av ramar skickas via en broadcast i CAN-bussen. 
 
 The Classical CAN protokollet använder sig av en bithastighet i skilje och data fasen. Överföringshastigheten är begränsad till 1 MegaBit per sekund för korta nätverk. The payload för Classical CAN är begränsad till 8 bytes.
 
-The CAN FD protokollet har en payload 64 bytes. Hastigheten för skilje fasen för CAN FD är den samma som för Classical CAN medans hastigheten för data fasen är begränsad av transcieverns egenskaper och oscillatorns tolerans. \cite{CANdata}
+The CAN FD protokollet har en payload på 64 bytes. Hastigheten för skilje fasen för CAN FD är den samma som för Classical CAN medan hastigheten för data fasen är begränsad av transcieverns egenskaper och oscillatorns tolerans. \cite{CANdata}
 
 \subsection{FlexRay} \label{sec:FlexRay}
 kommunikationsbussen är en feltolerant och höghastighets bussystem som är utvecklad i konsensus av biltillverkare och ledande leverantörer. 
@@ -135,7 +135,7 @@ Eftersom det skickas över internet används IP (\emph{Internet Protocol}) som n
 Informationen som skickas kan innehålla konfidentiell data så som position, detta innebär att applikations protokollet som används antagligen använder någon typ av kryptering.
 
 Eftersom fördröjningen redan är relativt hög om data ska gå mellan två bilar används denna lösningen inte till tidskritiska applikationer så som att undvika kollision. 
-Det innebär att transportprotokollet som används antagligen värderar att data kommer fram högre än låg fördröjning. 
+Det innebär att transportprotokollet som används antagligen värderar pålitligheten högre än låg fördröjning. 
 Detta skulle exempelvis kunna vara TCP (\emph{Transmission Control Protocol}) som kommer skicka om alla paket som inte konfirmerats att det kommit fram. \cite{TCP}
 
 I Europa finns det en standard för att koda bilrelaterad data kallad DATEX \textrm{II}. 
@@ -154,7 +154,7 @@ Det innebär att en nod kan tro att meddelandet kom fram ostört men egentligen 
 
 \begin{figure}
 	\begin{center}
-		\resizebox{!}{20mm}{\includegraphics{HiddenNode.pdf}}
+		\resizebox{!}{30mm}{\includegraphics{HiddenNode.pdf}}
 	\end{center}
 	\caption{Visualisering av problemet när noder inte syns för sändare av meddelanden.}
 	\label{Img:HiddenNode}
@@ -169,7 +169,7 @@ Metoden som används i kommunikation mellan noder är SC-FDMA (\emph{Single-Carr
 	\item Noderna är uppkopplade mot en radiostation och radiostationen modererar när noderna får skicka meddelanden till varandra så meddelanden aldrig krockar.
 	\item Noderna saknar uppkoppling och väljer själva på vilket band och när de skickar meddelandena.
 \end{enumerate}
-Läge 2 ger liknande problem som CSMA/CA då trafik kan krocka och meddelanden kan inte försäkras att de skickas inom ett visst tidsspann.
+Läge 2 ger liknande problem som CSMA/CA då trafik kan krocka och meddelanden inte kan försäkras att de skickas inom ett visst tidsspann.
 Men eftersom E-UTRAN-täckning i trafiktunga områden ofta finns löser läge 1 problemen som uppstår i IEEE 802.11p.
 Eftersom samma modul används för både LTE och LTE ProSe kan teknikerna varieras med varandra så den bästa lösningen för olika problem kan användas.
 LTE ProSe är dock inte designat för V2X-kommunikation (Vehicle To Everything) så det saknar stöd för protokoll och säkerhetslager som denna typen av kommunikation kräver.
@@ -179,11 +179,7 @@ Det kommer inkludera D2D-kommunikation från början och täcka ett stort spektr
 5G är alltså en god kandidat till att bli standarden för denna typen av kommunikation, men eftersom varken standarden eller faktisk hårdvara som utnyttjar den är färdig utvecklad finns en viss osäkerhet.
 
 \section{Slutsats}
-Utvecklingen av självkörande bilar är fortfarande i ett tidigt stadium. Internt i bilen kan dock gamla standarder användas då elektrifiering av bilar pågått under en längre tid och självkörning bara är en vidareutveckling av det. När det kommer till extern kommunikation är det dock fortfarande mycket som är oklart. Biltillverkarna är fortfarande inte överens när det kommer till en gemensam standard men för hoppningen är att 5G ska kunna förena biltillverkarna.
-
-
-
-
+Utvecklingen av självkörande bilar är fortfarande i ett tidigt stadium. Internt i bilen kan gamla standarder användas då elektrifiering av bilar pågått under en längre tid och självkörning bara är en vidareutveckling av det. När det kommer till extern kommunikation är det fortfarande mycket som är oklart. Biltillverkarna är fortfarande inte överens när det kommer till en gemensam standard men för hoppningen är att 5G ska kunna förena biltillverkarna.
 
 
 \begin{thebibliography}{77}
@@ -301,8 +297,6 @@ Utvecklingen av självkörande bilar är fortfarande i ett tidigt stadium. Inter
 	\bibitem{TLS}Network Working Group: \emph{The Transport Layer Security (TLS) Protocol},
 	\url{https://tools.ietf.org/html/rfc5246},
 	2008-08 (hämtad 2016-12-08)
-%\bibitem{gsma}S. Parkvall: \emph{Broadband Wireless Access - HSPA and LTE}, http://www.s3.kth.se/signal/edu/s3\_seminar/2009/talks/sem2.pdf (last visited 2009-03-12)
-%\bibitem{hostmfl} P. Ödling, T. Magesacher, M. Berg, E. A. Sanchez, S. Höst and P. Börjesson: \emph{The Fourth Generation Broadband Concept}, IEEE Communications Magazine, Vol. 47, No. 1, pp. 63-69, IEEE Communication Society, 2009
 \end{thebibliography}
 
 \end{document}
